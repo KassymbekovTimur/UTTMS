@@ -1,0 +1,61 @@
+#How to run (locally):
+#"Health-checks:"
+#   "/health on ports 8001, 8002, 8080"
+#"Frontend: http://localhost:3000"
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  schedule:
+    build: ./schedule
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
+
+  participant:
+    build: ./participant
+    ports:
+      - "8002:8002"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - schedule
+      - participant
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
