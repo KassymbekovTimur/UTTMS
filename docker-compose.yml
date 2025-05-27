@@ -1,0 +1,19 @@
+services:
+  postgres-participant:
+    image: postgres:15
+    environment:
+        POSTGRES_DB: uttms
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"

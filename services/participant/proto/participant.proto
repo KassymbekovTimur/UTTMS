@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option go_package = "github.com/KassymbekovTimur/UTTMS/participant";
+package participant;
+
+service ParticipantService {
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+  rpc ConfirmEmail (ConfirmEmailRequest) returns (EmptyResponse);
+  rpc JoinSchedule (JoinRequest) returns (EmptyResponse);
+  rpc LeaveSchedule (LeaveRequest) returns (EmptyResponse);
+  rpc GetParticipant (GetRequest) returns (GetResponse);
+  rpc ListParticipants (ListRequest) returns (ListResponse);
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+}
+message RegisterResponse {
+  string participant_id = 1;
+}
+
+message ConfirmEmailRequest { string token = 1; }
+message EmptyResponse {}
+
+message JoinRequest {
+  string participant_id = 1;
+  string schedule_id = 2;
+}
+message LeaveRequest {
+  string participant_id = 1;
+  string schedule_id = 2;
+}
+
+message GetRequest { string participant_id = 1; }
+message Participant {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  repeated string schedule_ids = 4;
+  string status = 5; // e.g. "pending", "active"
+}
+message GetResponse { Participant participant = 1; }
+
+message ListRequest { string schedule_id = 1; }
+message ListResponse { repeated Participant participants = 1; }
